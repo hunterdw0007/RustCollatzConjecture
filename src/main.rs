@@ -1,11 +1,14 @@
 use std::collections::HashSet;
 
+use collatz::NaryTree;
+
 fn main() {
     println!("Following the numbers in the Collatz Conjecture:");
 
-    let mut numbers = HashSet::new();
-
-    numbers.insert(1);
+    let mut numbers = NaryTree {
+        value: 1,
+        nodes: Vec::new(),
+    };
 
     let mut next_unreached : u128 = 2;
 
