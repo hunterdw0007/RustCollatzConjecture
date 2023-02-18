@@ -1,42 +1,42 @@
-use std::collections::HashSet;
-
 use collatz::NaryTree;
 
 fn main() {
     println!("Following the numbers in the Collatz Conjecture:");
 
-    let mut numbers = NaryTree {
-        value: 1,
-        nodes: Vec::new(),
-    };
+    /*
+    * Ideas:
+    *
+    * With each iteration of the numbers,
+    * store the path as a vector
+    *
+    * After it has gotten to one, reverse the path and begin following the
+    * N-ary Tree with each number in the vector
+    * When something unreached is found, insert each value as new nodes to the tree
+    *
+    * Since it's a tree structure, there are no loops
+    */ 
+    let mut tree = NaryTree{ value: 1, nodes: Vec::new(), };
 
-    let mut next_unreached : u128 = 2;
-
-    while next_unreached < 10000 {         
-        let mut reached = Vec::new();
-        reached.push(next_unreached);
-        let mut current = next_unreached;
-        next_unreached += 1;
-        let mut found = false;
-
-        while !found {
-            if numbers.contains(&current) {
-                println!("{:?}", reached);
-                for x in &reached {
-                    numbers.insert(*x);
-                }
-                found = true;
-            }
-
-            if current % 2 == 0 {
-                current = current / 2;
-                reached.push(current);
-            }
-            else {
-                current = current * 3 + 1;
-                reached.push(current);
-            }
-        }
+    let mut reached: Vec<u128> = Vec::new();
+    
+    for i in 1..11 {         
+        collatz(&mut reached, i);
+        println!("{:?}", reached);
+        reached.clear();
     }
-    println!("{:?}", numbers);
+}
+
+pub fn collatz(path: &mut Vec<u128>, n: u128) {
+    path.push(n);
+
+    if n == 1 {
+        return;
+    }
+
+    if n % 2 == 0 {
+        collatz(path, n / 2)
+    }
+    else {
+        collatz(path, 3 * n + 1)
+    }
 }
