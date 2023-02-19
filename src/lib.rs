@@ -1,21 +1,18 @@
+use std::{rc::Rc, cell::RefCell};
+
 #[derive(Debug)]
 struct BinaryTree {
     pub value: u128,
-    pub first_child: Option<Box<BinaryTree>>,
-    pub second_child: Option<Box<BinaryTree>>,
+    pub first_child: Option<BinaryTreeRef>,
+    pub second_child: Option<BinaryTreeRef>,
 }
 
+type BinaryTreeRef = Rc<RefCell<BinaryTree>>;
+
 impl BinaryTree {
-    pub fn find(self, val:&u128) -> Option<BinaryTree> {
-        if self.value == *val {
-            return Some(self);
-        }
-        else {
-            let mut found : Option<BinaryTree> = self.first_child.unwrap().find(val);
-            if found.is_none() {
-                found = self.second_child.unwrap().find(val);
-            }
-            return found;
-        }
+    /// Return an Option reference to the BinaryTree child of this BinaryTree that
+    /// contains val or None if is not anywhere in the BinaryTree 
+    pub fn find(&self, val:&u128) {
+       
     }
 }
