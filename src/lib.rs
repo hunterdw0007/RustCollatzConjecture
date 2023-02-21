@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[derive(PartialEq)]
 pub enum CollatzTree {
     Leaf {
@@ -52,6 +52,7 @@ impl CollatzTree {
     /// Print the CollatzTree to the console
     pub fn print(&self, indent: u32) {
         println!("{:?}", self);
+        //TODO: make this better
     }
     //TODO: Get function
     //      will return an Option that either holds a reference to a
@@ -60,21 +61,21 @@ impl CollatzTree {
     //      This will be used to find the location in the tree to insert
     //      the next value instead of just creating a tree with all odd
     //      and even
-    pub fn get(&self, val: u128) -> Option<&CollatzTree> {
-         match *self {
+    pub fn get(&self, val: u128) -> Option<CollatzTree> {
+         match self {
             CollatzTree::Leaf { 
                 ref value, 
                 ref odd, 
                 ref even 
             } => {
                 if *value == val {
-                    return Some(self);
+                    return Some(self.clone());
                 }
                 if odd.contains(val) {
-                    return odd.get(val);
+                    return odd.clone().get(val);
                 }
                 else {
-                    return even.get(val);
+                    return even.clone().get(val);
                 }
             },
             CollatzTree::Empty => {
@@ -197,7 +198,7 @@ mod tests {
     fn get_tree_1() {
         let tree = CollatzTree::create(1);
 
-        assert_eq!(*tree.get(1).unwrap(), CollatzTree::Leaf { value: 1, odd: Box::new(CollatzTree::Empty), even: Box::new(CollatzTree::Empty) });
+        assert_eq!(tree.get(1).unwrap(), CollatzTree::Leaf { value: 1, odd: Box::new(CollatzTree::Empty), even: Box::new(CollatzTree::Empty) });
     }
 
     #[test]
@@ -205,17 +206,17 @@ mod tests {
         let mut tree = CollatzTree::create(1);
         tree.insert(2);
 
-        assert_eq!(*tree.get(2).unwrap(), CollatzTree::Leaf { value: 2, odd: Box::new(CollatzTree::Empty), even: Box::new(CollatzTree::Empty) });
+        assert_eq!(tree.get(2).unwrap(), CollatzTree::Leaf { value: 2, odd: Box::new(CollatzTree::Empty), even: Box::new(CollatzTree::Empty) });
     }
 
     #[test]
     fn get_tree_3() {
         let mut tree = CollatzTree::create(2);
         tree.insert(3);
-        tree = *tree.get(3).unwrap();
+        tree = tree.get(3).unwrap();
         tree.insert(4);
 
-        assert_eq!(*tree.get(3).unwrap(), CollatzTree::Leaf { value: 3,
+        assert_eq!(tree.get(3).unwrap(), CollatzTree::Leaf { value: 3,
             odd: Box::new(CollatzTree::Empty),
             even: Box::new(CollatzTree::Leaf { value: 4,
                 odd: Box::new(CollatzTree::Empty),
